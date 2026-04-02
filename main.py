@@ -6,9 +6,7 @@ import easyocr
 import pyautogui
 import pygetwindow as gw
 
-# ========= CONFIGURATION =========
 
-# Languages for EasyOCR (e.g. ['en'] for English, ['en', 'ar'] for English + Arabic)
 OCR_LANGUAGES = ["en"]
 
 # Folder containing input images
@@ -17,12 +15,9 @@ IMAGE_PATH = Path("img.png")
 # Folder where you want Notepad to save .txt files
 OUTPUT_DIR = Path("output")
 
-# ========= SETUP =========
-
 pyautogui.PAUSE = 0.02
 pyautogui.FAILSAFE = True
 
-# EasyOCR reader (lazy init on first use)
 _reader = None
 
 
@@ -39,14 +34,13 @@ def ocr_image(image_path: Path) -> str:
     reader = get_reader()
     result = reader.readtext(str(image_path))
 
-    # ترتيب حسب الموقع الرأسي
     result = sorted(result, key=lambda x: x[0][0][1])
 
     lines = []
     current_line = []
     last_y = None
 
-    y_threshold = 15  # المسافة التي نعتبرها نفس السطر
+    y_threshold = 15
 
     for bbox, text, conf in result:
         y = bbox[0][1]
@@ -66,7 +60,6 @@ def ocr_image(image_path: Path) -> str:
 
         last_y = y
 
-    # إضافة آخر سطر
     if current_line:
         current_line = sorted(current_line, key=lambda x: x[0])
         lines.append(" ".join([t[1] for t in current_line]))
@@ -74,10 +67,8 @@ def ocr_image(image_path: Path) -> str:
     return "\n".join(lines)
 
 
-# ========= WINDOW / NOTEPAD HELPERS =========
 
 def close_unexpected_window(allowed_keywords=("Notepad", "Save As")):
-    """Close any active window that isn't Notepad or its Save dialog."""
     try:
         win = gw.getActiveWindow()
     except Exception:
@@ -129,15 +120,11 @@ def ensure_notepad_foreground(notepad_window):
     except Exception:
         pass
 
-
-# ========= TYPING & SAVING =========
-
 def human_type(text: str, notepad_window):
     ensure_notepad_foreground(notepad_window)
     pyautogui.write(text, interval=0.01)
 
 def save_notepad_to_file(notepad_window, target_path: Path):
-    """Ctrl+S then type full path in Save dialog."""
     ensure_notepad_foreground(notepad_window)
     abs_path = str(target_path.resolve())
 
@@ -150,15 +137,8 @@ def save_notepad_to_file(notepad_window, target_path: Path):
     pyautogui.press("enter")
     time.sleep(1.0)
 
-
-# ========= MAIN LOGIC =========
-
-
 def get_unique_path(base_path: Path) -> Path:
-    """
-    If base_path exists, return a new path with a numeric suffix.
-    Example: note.txt -> note_1.txt, note_2.txt, ...
-    """
+    
     if not base_path.exists():
         return base_path
 
