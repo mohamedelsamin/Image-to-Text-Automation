@@ -42,7 +42,7 @@ The system follows this pipeline:
 pip install easyocr pyautogui pygetwindow
 ```
 ## Technologies Used
-EasyOCR (Deep Learning OCR)
-PyAutoGUI (Desktop Automation)
-PyGetWindow (Window Management)
+EasyOCR (Deep Learning OCR)  
+PyAutoGUI (Desktop Automation)  
+PyGetWindow (Window Management)  
 Python Pathlib (Modern File Handling)
